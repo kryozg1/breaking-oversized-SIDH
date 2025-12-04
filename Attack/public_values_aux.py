@@ -3,9 +3,14 @@ from sage.all import ZZ, randint, Integer
 p = None
 
 def generate_distortion_map(E):
-    if E.a_invariants() != (0,6,0,1,0):
+    if E.a_invariants() not in [(0,6,0,1,0), (0,0,0,1,0)]:
         raise NotImplementedError
-    return E.isogeny(E.lift_x(ZZ(1)), codomain=E)
+    if E.a_invariants() == (0,0,0,1,0):
+        def automorphism(P):
+            return E(2*E((-P[0], (E.base_field().gens()[0])*P[1])))
+        return automorphism
+    else:
+        return E.isogeny(E.lift_x(ZZ(1)), codomain=E)
 
 def generate_torsion_points(E, a, b):
     def get_l_torsion_basis(E, l):
